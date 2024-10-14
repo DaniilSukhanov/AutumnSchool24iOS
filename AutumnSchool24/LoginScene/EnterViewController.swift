@@ -10,7 +10,7 @@ import OSLog
 
 final class EnterViewController: UIViewController {
     private let logger = Logger(subsystem: "AutmnSchool24", category: "EnterViewController")
-    private let patternPassword = "^(?=.+[A-Z])(?=.+[0-9])(?=.+[.,?!():;]).{8,}$"
+    private let patternPassword = /^(?=.+[A-Z])(?=.+[0-9])(?=.+[.,?!():;]).{8,}$/
     private struct Constants {
         static let cornerRadiusTextField: CGFloat = 15
         static let cornerRadiusButton: CGFloat = 10
@@ -77,25 +77,13 @@ private extension EnterViewController {
         guard let password = passwordField.text else {
             return
         }
-        if password.count >= 8 && checkPasswordCorrect(password) {
+        if checkPasswordCorrect(password) {
             passwordField.layer.borderWidth = 0
             passwordField.layer.borderColor = nil
             
         } else {
             passwordField.layer.borderWidth = 1
             passwordField.layer.borderColor = UIColor.red.cgColor
-        }
-    }
-}
-
-// MARK: - Actions
-
-private extension EnterViewController {
-    @objc func loginButtonTapped() {
-        if checkFields() {
-            logger.info("Registartion successful!")
-            let animationVC = EnterViewController()
-            navigationController?.pushViewController(animationVC, animated: true)
         }
     }
 }
@@ -117,7 +105,7 @@ private extension EnterViewController {
     }
     
     func checkPasswordCorrect(_ password: String) -> Bool {
-        password.range(of: patternPassword) != nil
+        password.contains(patternPassword)
     }
 }
 
@@ -125,10 +113,9 @@ private extension EnterViewController {
     
 private extension EnterViewController {
     @objc func moveNextView() {
-        print(1)
         if checkFields() {
-            let animationVC = EnterViewController()
-            navigationController?.pushViewController(animationVC, animated: true)
+            logger.info("Registartion successful!")
+            dismiss(animated: true)
         }
     }
 }
