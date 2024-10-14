@@ -16,6 +16,10 @@ final class EnterViewController: UIViewController {
         static let cornerRadiusButton: CGFloat = 10
         static let customSpacing: CGFloat = 40
         static let leadingInset: CGFloat = 22
+        static let heightLoginButton: CGFloat = 50
+        static let widthLoginButton: CGFloat = 200
+        static let offsetLoginTitle: CGFloat = 70
+        static let spaceBetweenStackViewAndLoginTitle: CGFloat = 40
     }
     
     private lazy var loginField: UITextField = {
@@ -30,8 +34,10 @@ final class EnterViewController: UIViewController {
     private lazy var passwordField: UITextField = {
         let field = UITextField()
         field.placeholder = "Password"
+        field.layer.borderWidth = 1
         field.layer.masksToBounds = true
         field.borderStyle = .roundedRect
+        field.layer.borderColor = UIColor.clear.cgColor
         field.layer.cornerRadius = Constants.cornerRadiusTextField
         field.addTarget(self, action: #selector(handlePasswordChange), for: .editingChanged)
         return field
@@ -78,11 +84,9 @@ private extension EnterViewController {
             return
         }
         if checkPasswordCorrect(password) {
-            passwordField.layer.borderWidth = 0
-            passwordField.layer.borderColor = nil
+            passwordField.layer.borderColor = UIColor.clear.cgColor
             
         } else {
-            passwordField.layer.borderWidth = 1
             passwordField.layer.borderColor = UIColor.red.cgColor
         }
     }
@@ -123,51 +127,51 @@ private extension EnterViewController {
 // MARK: - SetupUI
 
 private extension EnterViewController {
-    func setupUIMainStackView() {
+    func setup() {
+        setupRootView()
+        setupLoginButton()
+        setupLoginTitle()
+        setupMainStackView()
+        
+    }
+    
+    func setupMainStackView() {
         view.addSubview(mainStackView)
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         mainStackView.addArrangedSubview(loginField)
         mainStackView.addArrangedSubview(passwordField)
         
         mainStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        mainStackView.topAnchor.constraint(equalTo: loginTitle.bottomAnchor, constant: 40).isActive = true
+        mainStackView.topAnchor.constraint(equalTo: loginTitle.bottomAnchor, constant: Constants.spaceBetweenStackViewAndLoginTitle).isActive = true
         
         mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingInset).isActive = true
     }
     
-    func setupUILoginButton() {
+    func setupLoginButton() {
         view.addSubview(loginButton)
         loginButton.translatesAutoresizingMaskIntoConstraints = false
-        loginButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        loginButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        loginButton.heightAnchor.constraint(equalToConstant: Constants.heightLoginButton).isActive = true
+        loginButton.widthAnchor.constraint(equalToConstant: Constants.widthLoginButton).isActive = true
         loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         loginButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.customSpacing).isActive = true
     }
     
-    func setupUILoginTitle() {
+    func setupLoginTitle() {
         view.addSubview(loginTitle)
         loginTitle.translatesAutoresizingMaskIntoConstraints = false
         loginTitle.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        loginTitle.topAnchor.constraint(equalTo: view.topAnchor, constant: 70).isActive = true
+        loginTitle.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.offsetLoginTitle).isActive = true
         loginTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.leadingInset).isActive = true
     }
     
-    func setupUIView() {
+    func setupRootView() {
         view.backgroundColor = .black
-    }
-    
-    func setupUI() {
-        setupUIView()
-        setupUILoginButton()
-        setupUILoginTitle()
-        setupUIMainStackView()
-        
     }
 }
 
 extension EnterViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        setup()
     }
 }
