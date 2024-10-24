@@ -21,6 +21,8 @@ final class AnimationsViewController: UIViewController {
         static let timecodeInitial = "0:00"
     }
     
+    var currentAnimationIndex: Int = 0
+    
     private lazy var createConfigurationButton: (UIImage, CGFloat) -> UIButton = { image, pointSize in
         var config = UIButton.Configuration.plain()
         
@@ -44,16 +46,19 @@ final class AnimationsViewController: UIViewController {
     
     private lazy var playPauseButton: UIButton = {
         let button = createConfigurationButton(.play, Constants.playPausePointSize)
+        button.addTarget(self, action: #selector(togglePlayPause), for: .touchUpInside)
         return button
     }()
     
     private lazy var previusButton: UIButton = {
         let button = createConfigurationButton(.backward, Constants.playPausePointSize)
+        button.addTarget(self, action: #selector(showPreviusAnimation), for: .touchUpInside)
         return button
     }()
     
     private lazy var nextButton: UIButton = {
         let button = createConfigurationButton(.forward, Constants.playPausePointSize)
+        button.addTarget(self, action: #selector(showNextAnimation), for: .touchUpInside)
         return button
     }()
     
@@ -100,17 +105,20 @@ final class AnimationsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupView()
-        loadAnimation(ar: Constants.initialAnimationIndex, autoPlay: true)
+        loadAnimation(ar: Constants.initialAnimationIndex, autoPlay: false)
     }
     
     func setupView() {
-        view.addSubview(animationView)
+        view.addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            animationView.topAnchor.constraint(equalTo: view.topAnchor),
-            animationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            animationView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            animationView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            stackView.topAnchor.constraint(equalTo: view.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            animationView.heightAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.6),
+            controlsContainer.heightAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.4),
         ])
     }
     
@@ -123,5 +131,26 @@ final class AnimationsViewController: UIViewController {
         } else {
             animationView.stop()
         }
+        playPauseButton.configuration?.image = autoPlay ? .pause : .play
+    }
+    
+    @objc func togglePlayPause() {
+        if animationView.isAnimationPlaying {
+            animationView.stop()
+            playPauseButton.configuration?.image = .play
+        } else {
+            animationView.play()
+            playPauseButton.configuration?.image = .pause
+        }
+    }
+    
+    @objc func showPreviusAnimation() {
+        currentAnimationIndex = (currentAnimationIndex - 1 + Constants.animationNames.count) % Constants.animationNames.count
+        loadAnimation(ar: currentAnimationIndex, autoPlay: animationView.isAnimationPlaying)
+    }
+    
+    @objc func showNextAnimation() {
+        currentAnimationIndex = (currentAnimationIndex - 1) % Constants.animationNames.count
+        loadAnimation(ar: currentAnimationIndex, autoPlay: animationView.isAnimationPlaying)
     }
 }
