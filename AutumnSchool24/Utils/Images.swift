@@ -10,10 +10,10 @@
 import UIKit
 
 extension UIImage {
-    static let play = UIImage(systemName: "play.fill")
-    static let pause = UIImage(systemName: "pause.fill")
-    static let backward = UIImage(systemName: "backward.fill")
-    static let forward = UIImage(systemName: "forward.fill")
-    static let fast = UIImage(systemName: "hare.fill")
-    static let slow = UIImage(systemName: "tortoise.fill")
+    static let play = UIImage(systemName: "play.fill") ?? UIImage()
+    static let pause = UIImage(systemName: "pause.fill") ?? UIImage()
+    static let backward = UIImage(systemName: "backward.fill") ?? UIImage()
+    static let forward = UIImage(systemName: "forward.fill") ?? UIImage()
+    static let fast = UIImage(systemName: "hare.fill") ?? UIImage()
+    static let slow = UIImage(systemName: "tortoise.fill") ?? UIImage()
 }
