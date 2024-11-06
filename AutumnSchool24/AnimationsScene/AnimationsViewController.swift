@@ -67,19 +67,12 @@ final class AnimationsViewController: UIViewController {
     
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(previusButton)
-        view.addSubview(playPauseButton)
-        view.addSubview(nextButton)
+        view.addSubview(verticalStack)
         
         NSLayoutConstraint.activate([
-            previusButton.trailingAnchor.constraint(equalTo: playPauseButton.leadingAnchor, constant: -10),
-            previusButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            verticalStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            verticalStack.topAnchor.constraint(equalTo: view.topAnchor)
             
-            playPauseButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            playPauseButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-            nextButton.leadingAnchor.constraint(equalTo: playPauseButton.trailingAnchor, constant: 10),
-            nextButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
         return view
@@ -97,7 +90,6 @@ final class AnimationsViewController: UIViewController {
         view.contentMode = .scaleAspectFit
         view.loopMode = .loop
         view.backgroundColor = .lightGray
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -118,13 +110,62 @@ final class AnimationsViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
             animationView.heightAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.6),
-            controlsContainer.heightAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.4),
+            controlsContainer.heightAnchor.constraint(equalTo: stackView.widthAnchor, multiplier: 0.4)
         ])
     }
+    
+    let timecodeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        label.font = .styleruBold
+        label.textAlignment = .center
+        return label
+    }()
+    
+    let animationNameLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .gray
+        label.font = .styleruBold
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var controlsButtonStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [previusButton, playPauseButton, nextButton])
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        stackView.spacing = Constants.controlButtonStackSpacing
+        return stackView
+    }()
+    
+    private lazy var buttonsContainerStack: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [controlsButtonStack])
+        stackView.axis = .vertical
+        stackView.spacing = Constants.controlsContainerStackSpacing
+        stackView.alignment = .center
+        return stackView
+    }()
+    
+    private lazy var animationInfoStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [timecodeLabel, animationNameLabel])
+        stack.axis = .vertical
+        stack.spacing = Constants.animationInfoStackSpacing
+        return stack
+    }()
+    
+    private lazy var verticalStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [animationInfoStack, animationView, buttonsContainerStack])
+        stack.axis = .vertical
+        stack.spacing = Constants.verticalStackSpacing
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
     
     func loadAnimation(ar index: Int, autoPlay: Bool) {
         let animationName = Constants.animationNames[index]
         animationView.animation = LottieAnimation.named(animationName)
+        animationNameLabel.text = animationName
+        timecodeLabel.text = Constants.timecodeInitial
         
         if autoPlay {
             animationView.play()
